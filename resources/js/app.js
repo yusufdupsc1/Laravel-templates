@@ -91,5 +91,10 @@ const initCharts = (data) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    const sidebar = document.getElementById('sidebar');
+    document.querySelectorAll('[data-toggle="sidebar"]').forEach((btn) => {
+        btn.addEventListener('click', () => sidebar?.classList.toggle('-translate-x-full'));
+    });
+
     initCharts(parseDashboardData());
 });
