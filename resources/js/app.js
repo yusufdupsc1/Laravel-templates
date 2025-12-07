@@ -1,4 +1,3 @@
-import './bootstrap';
 import Chart from 'chart.js/auto';
 
 const parseDashboardData = () => {
@@ -91,25 +90,6 @@ const initCharts = (data) => {
     }
 };
 
-const initToggles = () => {
-    const sidebar = document.getElementById('sidebar');
-    const toggles = document.querySelectorAll('[data-toggle="sidebar"]');
-    toggles.forEach((btn) => {
-        btn.addEventListener('click', () => {
-            sidebar?.classList.toggle('-translate-x-full');
-        });
-    });
-
-    document.addEventListener('keydown', (event) => {
-        if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
-            const input = document.querySelector('[data-input="command-k"]');
-            input?.focus();
-            event.preventDefault();
-        }
-    });
-};
-
 document.addEventListener('DOMContentLoaded', () => {
-    initToggles();
     initCharts(parseDashboardData());
 });
