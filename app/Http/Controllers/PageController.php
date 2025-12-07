@@ -208,4 +208,17 @@ class PageController extends Controller
 
         return view('contact', $data);
     }
+
+    public function services()
+    {
+        $data = [
+            'services' => [
+                ['title' => 'Web Design', 'desc' => 'Modern, responsive UIs'],
+                ['title' => 'API Development', 'desc' => 'Robust REST/GraphQL backends'],
+                ['title' => 'DevOps', 'desc' => 'CI/CD, observability, cloud infra'],
+            ],
+        ];
+
+        return view('services', $data);
+    }
 }

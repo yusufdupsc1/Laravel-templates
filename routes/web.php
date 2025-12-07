@@ -11,4 +11,6 @@ Route::get('/testimonials', [PageController::class, 'testimonials'])->name('test
 
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 
+Route::get('/services', [PageController::class, 'services'])->name('services');
+
 

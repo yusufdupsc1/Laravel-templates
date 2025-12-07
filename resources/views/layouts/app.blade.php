@@ -18,10 +18,12 @@
                     <div class="ml-10 flex items-baseline space-x-4">
                         <a href="{{ route('home') }}" class="@if(request()->routeIs('home')) text-blue-600 @else text-gray-700 hover:text-blue-600 @endif px-3 py-2 rounded-md text-sm font-medium transition">Home</a>
                         <a href="{{ route('about') }}" class="@if(request()->routeIs('about')) text-blue-600 @else text-gray-700 hover:text-blue-600 @endif px-3 py-2 rounded-md text-sm font-medium transition">About</a>
+                        <a href="{{ route('services') }}" class="@if(request()->routeIs('services')) text-blue-600 @else text-gray-700 hover:text-blue-600 @endif px-3 py-2 rounded-md text-sm font-medium transition">Services</a>
                         <a href="{{ route('testimonials') }}" class="@if(request()->routeIs('testimonials')) text-blue-600 @else text-gray-700 hover:text-blue-600 @endif px-3 py-2 rounded-md text-sm font-medium transition">Testimonials</a>
                         <a href="{{ route('contact') }}" class="@if(request()->routeIs('contact')) text-blue-600 @else text-gray-700 hover:text-blue-600 @endif px-3 py-2 rounded-md text-sm font-medium transition">Contact</a>
                     </div>
                 </div>
+
                 <!-- Mobile menu button -->
                 <div class="md:hidden">
                     <button id="mobile-menu-button" type="button" class="text-gray-700 hover:text-blue-600 focus:outline-none">
@@ -37,6 +39,7 @@
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="{{ route('home') }}" class="@if(request()->routeIs('home')) text-blue-600 bg-blue-50 @else text-gray-700 hover:bg-gray-100 @endif block px-3 py-2 rounded-md text-base font-medium">Home</a>
                 <a href="{{ route('about') }}" class="@if(request()->routeIs('about')) text-blue-600 bg-blue-50 @else text-gray-700 hover:bg-gray-100 @endif block px-3 py-2 rounded-md text-base font-medium">About</a>
+                <a href="{{ route('services') }}" class="@if(request()->routeIs('services')) text-blue-600 bg-blue-50 @else text-gray-700 hover:bg-gray-100 @endif block px-3 py-2 rounded-md text-base font-medium">Services</a>
                 <a href="{{ route('testimonials') }}" class="@if(request()->routeIs('testimonials')) text-blue-600 bg-blue-50 @else text-gray-700 hover:bg-gray-100 @endif block px-3 py-2 rounded-md text-base font-medium">Testimonials</a>
                 <a href="{{ route('contact') }}" class="@if(request()->routeIs('contact')) text-blue-600 bg-blue-50 @else text-gray-700 hover:bg-gray-100 @endif block px-3 py-2 rounded-md text-base font-medium">Contact</a>
             </div>
