@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Post;
 
 class PageController extends Controller
 {
@@ -220,5 +221,52 @@ class PageController extends Controller
         ];
 
         return view('services', $data);
+    }
+
+    public function posts()
+    {
+        $posts = $this->loadPosts();
+
+        return view('posts', [
+            'posts' => $posts,
+            'usingDatabase' => $this->usingDatabaseDriver(),
+        ]);
+    }
+
+    private function loadPosts()
+    {
+        if ($this->usingDatabaseDriver()) {
+            try {
+                return Post::query()->latest()->get(['id', 'title', 'body', 'created_at']);
+            } catch (\Throwable $e) {
+                // fall through to static sample data
+            }
+        }
+
+        return collect([
+            [
+                'id' => 1,
+                'title' => 'Laravel basics without a DB',
+                'body' => 'This environment lacks the SQLite driver, so we render static sample posts as a fallback.',
+                'created_at' => now(),
+            ],
+            [
+                'id' => 2,
+                'title' => 'Switch to a real database',
+                'body' => 'Install the sqlite3 PHP extension, run migrations and seeders, and the page will pull from the posts table.',
+                'created_at' => now(),
+            ],
+            [
+                'id' => 3,
+                'title' => 'Same Blade, different data',
+                'body' => 'The view template does not care whether data came from Eloquent or a static array.',
+                'created_at' => now(),
+            ],
+        ]);
+    }
+
+    private function usingDatabaseDriver(): bool
+    {
+        return extension_loaded('pdo_sqlite');
     }
 }
