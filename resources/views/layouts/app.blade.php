@@ -1,102 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="antialiased">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'My Website')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>@yield('title', 'NovaSchool Dashboard')</title>
+    <meta name="theme-color" content="#0f172a">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen flex flex-col bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex-shrink-0">
-                    <a href="{{ route('home') }}" class="text-2xl font-bold text-blue-600">MyWebsite</a>
+<body class="min-h-screen bg-slate-950 text-slate-100">
+    <div class="relative min-h-screen flex bg-slate-950">
+        <div class="absolute inset-0 opacity-60 pointer-events-none">
+            <div class="absolute -left-24 top-10 h-72 w-72 rounded-full bg-sky-600/20 blur-3xl"></div>
+            <div class="absolute right-0 bottom-0 h-80 w-80 rounded-full bg-emerald-500/10 blur-3xl"></div>
+        </div>
+
+        <aside id="sidebar" class="fixed z-30 inset-y-0 left-0 w-72 bg-slate-900/90 backdrop-blur-xl border-r border-white/5 transform md:translate-x-0 -translate-x-full transition-transform duration-200">
+            <div class="flex items-center justify-between px-6 h-16 border-b border-white/5">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.2em] text-slate-400">NovaSchool</p>
+                    <p class="text-lg font-semibold text-white">Control Center</p>
                 </div>
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-4">
-                        <a href="{{ route('home') }}" class="@if(request()->routeIs('home')) text-blue-600 @else text-gray-700 hover:text-blue-600 @endif px-3 py-2 rounded-md text-sm font-medium transition">Home</a>
-                        <a href="{{ route('about') }}" class="@if(request()->routeIs('about')) text-blue-600 @else text-gray-700 hover:text-blue-600 @endif px-3 py-2 rounded-md text-sm font-medium transition">About</a>
-                        <a href="{{ route('services') }}" class="@if(request()->routeIs('services')) text-blue-600 @else text-gray-700 hover:text-blue-600 @endif px-3 py-2 rounded-md text-sm font-medium transition">Services</a>
-                        <a href="{{ route('posts') }}" class="@if(request()->routeIs('posts')) text-blue-600 @else text-gray-700 hover:text-blue-600 @endif px-3 py-2 rounded-md text-sm font-medium transition">Posts</a>
-                        <a href="{{ route('testimonials') }}" class="@if(request()->routeIs('testimonials')) text-blue-600 @else text-gray-700 hover:text-blue-600 @endif px-3 py-2 rounded-md text-sm font-medium transition">Testimonials</a>
-                        <a href="{{ route('contact') }}" class="@if(request()->routeIs('contact')) text-blue-600 @else text-gray-700 hover:text-blue-600 @endif px-3 py-2 rounded-md text-sm font-medium transition">Contact</a>
-                    </div>
+                <button data-toggle="sidebar" class="md:hidden text-slate-300 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="px-4 py-6 space-y-6">
+                <div class="bg-gradient-to-r from-sky-500/10 to-emerald-500/10 border border-white/5 rounded-2xl p-4">
+                    <p class="text-sm text-slate-300">Live system</p>
+                    <p class="text-lg font-semibold text-white">School Management</p>
+                    <p class="text-xs text-slate-400 mt-2">Realtime metrics, attendance, finance</p>
                 </div>
 
-                <!-- Mobile menu button -->
-                <div class="md:hidden">
-                    <button id="mobile-menu-button" type="button" class="text-gray-700 hover:text-blue-600 focus:outline-none">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                <nav class="space-y-1 text-sm font-medium">
+                    @php
+                        $links = [
+                            ['label' => 'Overview', 'target' => '#overview', 'icon' => 'grid'],
+                            ['label' => 'Students', 'target' => '#students', 'icon' => 'users'],
+                            ['label' => 'Classes', 'target' => '#classes', 'icon' => 'calendar'],
+                            ['label' => 'Attendance', 'target' => '#attendance', 'icon' => 'check'],
+                            ['label' => 'Fees', 'target' => '#fees', 'icon' => 'wallet'],
+                            ['label' => 'Events', 'target' => '#events', 'icon' => 'sparkles'],
+                            ['label' => 'Messages', 'target' => '#messages', 'icon' => 'message'],
+                            ['label' => 'Reports', 'target' => '#reports', 'icon' => 'chart'],
+                        ];
+                    @endphp
+                    @foreach ($links as $link)
+                        <a href="{{ $link['target'] }}" class="flex items-center gap-3 px-3 py-3 rounded-xl text-slate-200 hover:bg-white/5 transition">
+                            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-white/5 text-slate-200">
+                                @switch($link['icon'])
+                                    @case('grid')
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6.5C4 5.12 5.12 4 6.5 4h2A2.5 2.5 0 0111 6.5v2A2.5 2.5 0 018.5 11h-2A2.5 2.5 0 014 8.5v-2zM13 6.5C13 5.12 14.12 4 15.5 4h2A2.5 2.5 0 0120 6.5v2A2.5 2.5 0 0117.5 11h-2A2.5 2.5 0 0113 8.5v-2zM4 15.5C4 14.12 5.12 13 6.5 13h2A2.5 2.5 0 0111 15.5v2A2.5 2.5 0 018.5 20h-2A2.5 2.5 0 014 17.5v-2zM13 15.5c0-1.38 1.12-2.5 2.5-2.5h2a2.5 2.5 0 012.5 2.5v2a2.5 2.5 0 01-2.5 2.5h-2a2.5 2.5 0 01-2.5-2.5v-2z" />
+                                        </svg>
+                                        @break
+                                    @case('users')
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14c-4.418 0-8 1.79-8 4v1h16v-1c0-2.21-3.582-4-8-4z" />
+                                        </svg>
+                                        @break
+                                    @case('calendar')
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 4v2m10-2v2m-9 4h8m-9 4h6M5 8h14a1 1 0 011 1v9a2 2 0 01-2 2H6a2 2 0 01-2-2V9a1 1 0 011-1z" />
+                                        </svg>
+                                        @break
+                                    @case('check')
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        @break
+                                    @case('wallet')
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 7h13a3 3 0 013 3v1a3 3 0 01-3 3H4V7zm0 0V6a2 2 0 012-2h8" />
+                                        </svg>
+                                        @break
+                                    @case('sparkles')
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v3m0 12v3m6-9h3M3 12h3m11.657-5.657L15.9 8.1M8.1 15.9l-2.757 2.757m0-10.514L8.1 8.1m7.8 7.8l2.757 2.757" />
+                                        </svg>
+                                        @break
+                                    @case('message')
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h8M8 14h5m6-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        @break
+                                    @case('chart')
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-4m6 4V7M3 17h18" />
+                                        </svg>
+                                        @break
+                                @endswitch
+                            </span>
+                            <span>{{ $link['label'] }}</span>
+                        </a>
+                    @endforeach
+                </nav>
+            </div>
+        </aside>
+
+        <div class="flex-1 md:pl-72">
+            <header class="sticky top-0 z-20 backdrop-blur-lg bg-slate-950/80 border-b border-white/5">
+                <div class="px-4 sm:px-6 lg:px-8 h-16 flex items-center gap-4">
+                    <button data-toggle="sidebar" class="md:hidden text-slate-300 hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
                     </button>
-                </div>
-            </div>
-        </div>
-        <!-- Mobile menu -->
-        <div id="mobile-menu" class="hidden md:hidden">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="{{ route('home') }}" class="@if(request()->routeIs('home')) text-blue-600 bg-blue-50 @else text-gray-700 hover:bg-gray-100 @endif block px-3 py-2 rounded-md text-base font-medium">Home</a>
-                <a href="{{ route('about') }}" class="@if(request()->routeIs('about')) text-blue-600 bg-blue-50 @else text-gray-700 hover:bg-gray-100 @endif block px-3 py-2 rounded-md text-base font-medium">About</a>
-                <a href="{{ route('services') }}" class="@if(request()->routeIs('services')) text-blue-600 bg-blue-50 @else text-gray-700 hover:bg-gray-100 @endif block px-3 py-2 rounded-md text-base font-medium">Services</a>
-                <a href="{{ route('posts') }}" class="@if(request()->routeIs('posts')) text-blue-600 bg-blue-50 @else text-gray-700 hover:bg-gray-100 @endif block px-3 py-2 rounded-md text-base font-medium">Posts</a>
-                <a href="{{ route('testimonials') }}" class="@if(request()->routeIs('testimonials')) text-blue-600 bg-blue-50 @else text-gray-700 hover:bg-gray-100 @endif block px-3 py-2 rounded-md text-base font-medium">Testimonials</a>
-                <a href="{{ route('contact') }}" class="@if(request()->routeIs('contact')) text-blue-600 bg-blue-50 @else text-gray-700 hover:bg-gray-100 @endif block px-3 py-2 rounded-md text-base font-medium">Contact</a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="flex-grow">
-        @yield('content')
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">MyWebsite</h3>
-                    <p class="text-gray-400 text-sm">Building amazing web experiences since 2025.</p>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="{{ route('home') }}" class="text-gray-400 hover:text-white transition">Home</a></li>
-                        <li><a href="{{ route('about') }}" class="text-gray-400 hover:text-white transition">About</a></li>
-                        <li><a href="{{ route('testimonials') }}" class="text-gray-400 hover:text-white transition">Testimonials</a></li>
-                        <li><a href="{{ route('contact') }}" class="text-gray-400 hover:text-white transition">Contact</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Connect With Us</h3>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition">
-                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition">
-                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition">
-                            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.941z"/></svg>
-                        </a>
+                    <div class="relative flex-1">
+                        <input data-input="command-k" type="search" placeholder="Search students, classes, fees..." class="w-full bg-white/5 border border-white/5 rounded-xl py-2.5 pl-11 pr-3 text-sm text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500/70">
+                        <span class="absolute inset-y-0 left-3 flex items-center text-slate-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
+                            </svg>
+                        </span>
+                        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] px-2 py-1 rounded-lg bg-white/5 border border-white/5 text-slate-300">⌘K</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button class="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 border border-white/5 text-slate-200 hover:bg-white/10">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                        </button>
+                        <button class="h-10 w-10 flex items-center justify-center rounded-xl bg-gradient-to-br from-sky-500 to-emerald-500 text-white font-semibold shadow-lg shadow-sky-500/20">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </button>
+                        <div class="flex items-center gap-3 rounded-2xl bg-white/5 border border-white/5 px-3 py-2">
+                            <div>
+                                <p class="text-xs text-slate-400">Admin</p>
+                                <p class="text-sm font-semibold text-white">Dr. Evelyn Bates</p>
+                            </div>
+                            <div class="h-10 w-10 rounded-xl bg-gradient-to-br from-sky-500 to-emerald-500 flex items-center justify-center font-semibold text-white">EB</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
-                <p class="text-gray-400 text-sm">&copy; {{ date('Y') }} MyWebsite. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+            </header>
 
-    <script>
-        // Mobile menu toggle
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        });
-    </script>
+            <main class="relative px-4 sm:px-6 lg:px-8 py-8">
+                @yield('content')
+            </main>
+        </div>
+    </div>
 </body>
 </html>
