@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Twilio\Rest\Client;
 
 class SendMessageNotifications implements ShouldQueue
 {
@@ -33,5 +34,30 @@ class SendMessageNotifications implements ShouldQueue
             'subject' => $this->message->subject,
             'priority' => $this->message->priority,
         ]);
+
+        $this->sendSms();
+    }
+
+    private function sendSms(): void
+    {
+        $sid = config('services.twilio.sid');
+        $token = config('services.twilio.token');
+        $from = config('services.twilio.from');
+        $to = config('services.twilio.to');
+
+        if (!($sid && $token && $from && $to)) {
+            Log::info('Twilio SMS skipped: missing configuration');
+            return;
+        }
+
+        try {
+            $client = new Client($sid, $token);
+            $client->messages->create($to, [
+                'from' => $from,
+                'body' => "[{$this->message->priority}] {$this->message->subject} - {$this->message->body}",
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Twilio SMS failed', ['error' => $e->getMessage()]);
+        }
     }
 }

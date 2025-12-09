@@ -7,6 +7,7 @@ use App\Models\ClassSession;
 use App\Models\Invoice;
 use App\Models\Message;
 use App\Models\Student;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
@@ -23,6 +24,13 @@ class DashboardController extends Controller
 
             $feesTotals = $this->collections($invoices);
             $attendanceAvg = $attendance->avg('present') ?? 0;
+            $paidAmount = $invoices->where('status', 'Paid')->sum('amount');
+            $pendingAmount = $invoices->where('status', 'Pending')->sum('amount');
+            $totalAmount = $invoices->sum('amount');
+            $profitEstimate = $paidAmount * 0.22; // simple margin estimate
+            $lineLabels = ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            $incomeSeries = array_fill(0, count($lineLabels), max($paidAmount, 0));
+            $expenseSeries = array_fill(0, count($lineLabels), max($pendingAmount, 0));
 
             return [
                 'overview' => [
@@ -31,6 +39,12 @@ class DashboardController extends Controller
                     ['label' => 'Average GPA', 'value' => number_format($students->avg('gpa'), 2), 'trend' => '+0.1 YoY'],
                     ['label' => 'Guardian response', 'value' => '91%', 'trend' => '+6% this week'],
                 ],
+                'financeCards' => [
+                    ['label' => 'Total Students', 'value' => number_format($students->count()), 'sub' => 'This Month'],
+                    ['label' => 'Total Employees', 'value' => '78', 'sub' => 'This Month'],
+                    ['label' => 'Revenue', 'value' => '$' . number_format($paidAmount, 0), 'sub' => 'This Month'],
+                    ['label' => 'Total Profit', 'value' => '$' . number_format($profitEstimate, 0), 'sub' => 'This Month'],
+                ],
                 'stats' => [
                     ['label' => 'Attendance', 'value' => number_format($attendanceAvg, 1) . '%', 'caption' => 'Live across all grades', 'trend' => '+1.4% this week'],
                     ['label' => 'Fees collected', 'value' => $feesTotals['paidPercent'] . '%', 'caption' => 'Term-wise reconciliation', 'trend' => '+3.9% MoM'],
@@ -38,9 +52,12 @@ class DashboardController extends Controller
                     ['label' => 'System health', 'value' => '99.9%', 'caption' => 'APIs, SIS, comms', 'trend' => 'No incidents'],
                 ],
                 'charts' => [
-                    'attendanceTrend' => [
-                        'labels' => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Today'],
-                        'values' => [95, 96, 94, 93, 97, 95],
+                    'line' => [
+                        'labels' => $lineLabels,
+                        'datasets' => [
+                            ['label' => 'Income', 'data' => $incomeSeries],
+                            ['label' => 'Expenses', 'data' => $expenseSeries],
+                        ],
                     ],
                     'feesStatus' => [
                         'labels' => ['Paid', 'Pending', 'Overdue'],
@@ -71,6 +88,17 @@ class DashboardController extends Controller
                     'title' => $message->subject,
                     'meta' => $message->author . ' • ' . $message->created_at->diffForHumans(),
                 ]),
+                'today' => [
+                    'studentsPresent' => number_format($attendanceAvg, 1),
+                    'employeesPresent' => 92.0,
+                    'feeCollection' => $feesTotals['paidPercent'],
+                ],
+                'feesAmount' => [
+                    'paid' => $paidAmount,
+                    'pending' => $pendingAmount,
+                    'total' => $totalAmount,
+                ],
+                'calendar' => $this->buildCalendar(Carbon::now()),
             ];
         });
 
@@ -109,5 +137,31 @@ class DashboardController extends Controller
         }
 
         return $values;
+    }
+
+    private function buildCalendar(Carbon $date): array
+    {
+        $start = $date->copy()->startOfMonth()->startOfWeek(Carbon::SUNDAY);
+        $end = $date->copy()->endOfMonth()->endOfWeek(Carbon::SATURDAY);
+
+        $weeks = [];
+        $cursor = $start->copy();
+        while ($cursor <= $end) {
+            $week = [];
+            for ($i = 0; $i < 7; $i++) {
+                $week[] = [
+                    'day' => $cursor->day,
+                    'in_month' => $cursor->month === $date->month,
+                    'is_today' => $cursor->isToday(),
+                ];
+                $cursor->addDay();
+            }
+            $weeks[] = $week;
+        }
+
+        return [
+            'month' => $date->format('F Y'),
+            'weeks' => $weeks,
+        ];
     }
 }
