@@ -1,149 +1,117 @@
-# Laravel Templates
+# SchoolOps Laravel Dashboard
 
-A simple Laravel website with dynamic content management, perfect for learning Laravel basics.
+Production-ready Laravel 12 dashboard starter for school operations: attendance, classes, finance, messaging, and access controls—styled with Tailwind CSS 4 and Vite.
 
 ## Features
 
-- 🏠 **Home Page** - Hero section with features and call-to-action
-- ℹ️ **About Page** - Company story, mission, values, and team members
-- ⭐ **Testimonials Page** - Customer reviews and statistics
-- 📧 **Contact Page** - Contact form and business information
-- 🎨 **Responsive Design** - Built with Tailwind CSS
-- 🔄 **Dynamic Content** - All content managed through controllers
+- 🛰️ Operations cockpit with live-style metrics, charts (Chart.js), and activity signals
+- 🧑‍🎓 Students & classes tables with guardian contacts and schedule coverage
+- ✅ Attendance & finance reporting cards with fee and budget summaries
+- ✉️ Messages & alerts lanes for quick comms
+- 🛡️ Settings toggles and team access groups
+- 🎨 Modern UI powered by Tailwind CSS 4 + Instrument Sans, responsive out of the box
 
-## Pages
+## Stack
 
-### Home (`/`)
-- Hero section with customizable title and CTAs
-- Features showcase
-- Call-to-action section
+- Laravel 12, PHP 8.2+
+- Vite 7, Tailwind CSS 4 (@tailwindcss/vite)
+- Chart.js for visualizations
 
-### About (`/about`)
-- Company story with multiple paragraphs
-- Mission and values
-- Team member profiles
+## Prerequisites
 
-### Testimonials (`/testimonials`)
-- Customer testimonials with ratings
-- Statistics dashboard
+- PHP 8.2+, Composer
+- Node.js 18+ and npm
+- SQLite (default) or another DB configured in `.env`
 
-### Contact (`/contact`)
-- Contact form
-- Business information (address, phone, email, hours)
+## Local setup
 
-## Tech Stack
-
-- **Framework:** Laravel 11.x
-- **Styling:** Tailwind CSS (CDN)
-- **PHP:** 8.2+
-
-## Installation
-
-1. Clone the repository
 ```bash
 git clone https://github.com/yusufdupsc1/Laravel-templates.git
 cd Laravel-templates
-```
-
-2. Install dependencies
-```bash
-composer install
-```
-
-3. Create environment file
-```bash
 cp .env.example .env
-```
-
-4. Generate application key
-```bash
+composer install
 php artisan key:generate
+npm install
+# optional: adjust DB path in .env (defaults to SQLite at database/database.sqlite)
+php artisan migrate --seed
 ```
 
-5. Start the development server
+Start the app:
+
 ```bash
+# terminal 1
 php artisan serve
+
+# terminal 2
+npm run dev
 ```
 
-6. Visit `http://127.0.0.1:8000` in your browser
+Visit `http://127.0.0.1:8000`.
 
-## Project Structure
+## Demo content
 
+- Demo data is seeded into SQLite for students, classes, attendance summaries, invoices, settings, and messages (`php artisan migrate --seed`).
+- Add/edit/delete via UI:
+  - Students: inline form + per-row edit/delete on `/students` (search + CSV export)
+  - Classes: inline form + per-row edit/delete on `/classes`
+  - Finance: inline form + per-row edit/delete on `/finance` (totals, aging, status colors)
+  - Messages: compose + archive on `/messages` (queued email/SMS stub)
+  - Attendance: per-grade edit/lock on `/attendance`
+- Dashboard metrics/charts auto-read from stored data and are cached.
+
+## Production build
+
+```bash
+npm run build
+php artisan optimize
+php artisan config:cache
+php artisan route:cache
 ```
-├── app/
-│   └── Http/
-│       └── Controllers/
-│           └── PageController.php    # Main controller with dynamic content
-├── resources/
-│   └── views/
-│       ├── layouts/
-│       │   └── app.blade.php        # Main layout with navigation & footer
-│       ├── home.blade.php           # Home page
-│       ├── about.blade.php          # About page
-│       ├── testimonials.blade.php   # Testimonials page
-│       └── contact.blade.php        # Contact page
-└── routes/
-    └── web.php                       # Route definitions
-```
 
-## Customization
+Set `APP_ENV=production` and configure your database/queue/mail values in `.env` before deploying.
 
-### Updating Content
+## API
 
-All content is managed in `app/Http/Controllers/PageController.php`. Simply update the arrays in each method:
-
-- `home()` - Hero, features, and CTA content
-- `about()` - Story, values, and team members
-- `testimonials()` - Customer reviews and stats
-- `contact()` - Contact information
-
-### Example: Adding a New Team Member
-
+- Sanctum-secured API endpoints:
+  - `GET /api/students`, `/api/classes`, `/api/invoices`, `/api/messages`, `/api/attendance`
+- Issue a token in Tinker:
 ```php
-public function about()
-{
-    $data = [
-        'team' => [
-            [
-                'name' => 'New Member',
-                'position' => 'Role',
-                'icon' => '👨‍💼',
-                'color' => 'blue'
-            ]
-        ]
-    ];
-}
+$user = \App\Models\User::factory()->create(['email' => 'api@example.com']);
+$user->createToken('cli')->plainTextToken;
 ```
 
-## Routes
+## Docker
 
-- `GET /` - Home page
-- `GET /about` - About page
-- `GET /testimonials` - Testimonials page
-- `GET /contact` - Contact page
+```bash
+docker build -t schoolops .
+docker run -p 8000:9000 --env-file .env schoolops
+```
 
-## Learning Resources
+## CI/CD (GitHub Actions + Vercel)
 
-This project demonstrates:
-- Laravel routing
-- Blade templating
-- Controller usage
-- Passing data to views
-- Layout inheritance
-- Responsive design with Tailwind CSS
+- Workflow: `.github/workflows/ci.yml` runs Composer/NPM installs, migrations, tests, and triggers Vercel deploy on `main`.
+- Secrets needed: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`.
+- Vercel uses `vercel.json` + `Dockerfile`.
 
-## Contributing
+## Queues & notifications
 
-Feel free to fork this repository and submit pull requests for improvements!
+- Messages dispatch a queued `SendMessageNotifications` job (email via configured mailer, SMS placeholder via logs). Run `php artisan queue:work` in production.
 
-## License
+## Tests
 
-This project is open-source and available for learning purposes.
+```bash
+php artisan test
+```
 
-## Support
+## GitHub sync
 
-For questions or issues, please open an issue on GitHub.
+```bash
+git status
+git add -A
+git commit -m "Describe your change"
+git push origin main
+```
 
 ---
 
-**Perfect for Laravel beginners!** 🚀
+Ship-ready starting point for a school operations control center. 🚀

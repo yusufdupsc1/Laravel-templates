@@ -2,24 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Setting;
+use App\Models\Team;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
+
 class SettingsController extends Controller
 {
-    public function __invoke()
+    public function __invoke(): View
     {
-        $settings = [
-            ['name' => 'Two-factor authentication', 'enabled' => true, 'description' => 'Require OTP for admin sign-in'],
-            ['name' => 'Guardian notifications', 'enabled' => true, 'description' => 'Send alerts for fees, attendance, and incidents'],
-            ['name' => 'Data exports', 'enabled' => false, 'description' => 'Allow CSV exports for staff'],
-            ['name' => 'Auto-sync SIS', 'enabled' => true, 'description' => 'Sync roster and grades nightly'],
-        ];
+        return view('settings', [
+            'settings' => Setting::orderBy('name')->get(),
+            'teams' => Team::orderBy('name')->get(),
+        ]);
+    }
 
-        $teams = [
-            ['name' => 'Administration', 'members' => 8, 'role' => 'Full access'],
-            ['name' => 'Academic Leads', 'members' => 12, 'role' => 'Curriculum + reports'],
-            ['name' => 'Finance', 'members' => 6, 'role' => 'Payments + invoicing'],
-            ['name' => 'Counseling', 'members' => 5, 'role' => 'Student support'],
-        ];
+    public function update(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'settings' => ['array'],
+            'settings.*.id' => ['integer', 'exists:settings,id'],
+            'settings.*.enabled' => ['boolean'],
+        ]);
 
-        return view('settings', compact('settings', 'teams'));
+        if ($request->filled('settings')) {
+            foreach ($request->settings as $settingData) {
+                $setting = Setting::find($settingData['id']);
+                if ($setting) {
+                    $setting->update(['enabled' => (bool) ($settingData['enabled'] ?? false)]);
+                }
+            }
+        }
+
+        return redirect()->route('settings')->with('status', 'Settings updated');
     }
 }

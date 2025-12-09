@@ -97,4 +97,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     initCharts(parseDashboardData());
+
+    const toastRoot = document.getElementById('toast-root');
+    const flash = toastRoot?.dataset.flash;
+    if (flash) {
+        const toast = document.createElement('div');
+        toast.className =
+            'fixed bottom-6 right-6 z-50 flex items-start gap-3 rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white shadow-2xl backdrop-blur-md ring-1 ring-white/10 max-w-sm';
+        toast.innerHTML = `
+            <span class="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500 to-emerald-500 text-white shadow-md">✓</span>
+            <div class="flex-1">
+                <p class="font-semibold">Updated</p>
+                <p class="text-slate-200">${flash}</p>
+            </div>
+            <button aria-label="Close toast" class="text-slate-300 hover:text-white">&times;</button>
+        `;
+        document.body.appendChild(toast);
+        const close = toast.querySelector('button');
+        close?.addEventListener('click', () => toast.remove());
+        setTimeout(() => toast.remove(), 4500);
+    }
 });

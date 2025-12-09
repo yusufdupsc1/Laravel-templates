@@ -1,0 +1,10 @@
+node_modules
+vendor
+storage/framework/cache
+storage/framework/views
+storage/framework/sessions
+storage/logs
+public/build
+.env
+.git
+.gitignore

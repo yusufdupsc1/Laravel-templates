@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SchoolOps is a production-ready Laravel starter for school operations dashboards across students, attendance, finance, and messaging.">
     <title>@yield('title', 'SchoolOps Dashboard')</title>
     <meta name="theme-color" content="#020617">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -13,15 +14,16 @@
             <div class="absolute -left-10 top-[-10%] h-72 w-72 rounded-full bg-sky-500/15 blur-3xl"></div>
             <div class="absolute right-[-10%] bottom-[-10%] h-96 w-96 rounded-full bg-emerald-500/10 blur-[120px]"></div>
         </div>
+        <div id="toast-root" data-flash="{{ session('status') }}"></div>
 
         @php
             $nav = [
                 ['name' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'chart'],
-                ['name' => 'Students', 'route' => 'students', 'icon' => 'users'],
-                ['name' => 'Classes', 'route' => 'classes', 'icon' => 'calendar'],
+                ['name' => 'Students', 'route' => 'students.index', 'icon' => 'users'],
+                ['name' => 'Classes', 'route' => 'classes.index', 'icon' => 'calendar'],
                 ['name' => 'Attendance', 'route' => 'attendance', 'icon' => 'check'],
-                ['name' => 'Finance', 'route' => 'finance', 'icon' => 'wallet'],
-                ['name' => 'Messages', 'route' => 'messages', 'icon' => 'inbox'],
+                ['name' => 'Finance', 'route' => 'finance.index', 'icon' => 'wallet'],
+                ['name' => 'Messages', 'route' => 'messages.index', 'icon' => 'inbox'],
                 ['name' => 'Settings', 'route' => 'settings', 'icon' => 'cog'],
             ];
         @endphp
@@ -105,6 +107,21 @@
             </header>
 
             <main class="relative px-4 sm:px-6 lg:px-10 py-10">
+                @if (session('status'))
+                    <div class="mb-6 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">
+                        {{ session('status') }}
+                    </div>
+                @endif
+                @if ($errors->any())
+                    <div class="mb-6 rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-50">
+                        <p class="font-semibold">Please fix the following:</p>
+                        <ul class="mt-2 space-y-1 list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 @yield('content')
             </main>
         </div>

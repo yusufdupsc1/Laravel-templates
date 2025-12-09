@@ -2,24 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Message;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\View\View;
+use App\Jobs\SendMessageNotifications;
+
 class MessagesController extends Controller
 {
-    public function __invoke()
+    public function index(): View
     {
-        $threads = [
-            ['title' => 'Overdue fee reminders sent', 'author' => 'Finance', 'time' => '10 mins ago', 'body' => 'Automated reminders dispatched to 32 guardians. Next follow-up in 48h.', 'priority' => 'High'],
-            ['title' => 'AC maintenance scheduled', 'author' => 'Facilities', 'time' => '30 mins ago', 'body' => 'Cooling maintenance for Block C, rooms offline Saturday 8-11am.', 'priority' => 'Normal'],
-            ['title' => 'Wellness checks', 'author' => 'Counseling', 'time' => '1 hr ago', 'body' => 'Advisors meeting with Grade 9 students flagged for low engagement.', 'priority' => 'Normal'],
-            ['title' => 'Field trip approvals', 'author' => 'Grade 10 Lead', 'time' => '2 hrs ago', 'body' => 'Consent forms needed by Friday for museum trip.', 'priority' => 'High'],
-        ];
+        $threads = Message::latest()->paginate(10);
 
-        $inbox = [
-            ['from' => 'Guardian - Porter', 'subject' => 'Medical leave update', 'time' => '5 mins ago'],
-            ['from' => 'Vendor - LabTech', 'subject' => 'Equipment shipment', 'time' => '25 mins ago'],
-            ['from' => 'Teacher - Rahman', 'subject' => 'Schedule swap request', 'time' => '1 hr ago'],
-            ['from' => 'Student - Chen', 'subject' => 'Transcript request', 'time' => '1 hr ago'],
-        ];
+        return view('messages', [
+            'threads' => $threads,
+            'inbox' => $threads->getCollection()->take(4),
+        ]);
+    }
 
-        return view('messages', compact('threads', 'inbox'));
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'author' => ['required', 'string', 'max:255'],
+            'subject' => ['required', 'string', 'max:255'],
+            'body' => ['nullable', 'string'],
+            'priority' => ['required', 'string', 'max:50'],
+        ]);
+
+        $message = Message::create($validated);
+        // Queue notification delivery (email + SMS log placeholder)
+        Bus::dispatch(new SendMessageNotifications($message));
+        Cache::forget('dashboard-data');
+
+        return redirect()->route('messages.index')->with('status', 'Message posted');
+    }
+
+    public function destroy(Message $message): RedirectResponse
+    {
+        $message->delete();
+        Cache::forget('dashboard-data');
+
+        return redirect()->route('messages.index')->with('status', 'Message archived');
     }
 }

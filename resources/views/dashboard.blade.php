@@ -110,12 +110,12 @@
                         <tbody class="divide-y divide-white/5">
                             @foreach ($dashboard['classes'] as $class)
                                 <tr class="hover:bg-white/5 transition">
-                                    <td class="px-4 py-3 font-semibold text-white">{{ $class['name'] }}</td>
-                                    <td class="px-4 py-3 text-slate-200">{{ $class['teacher'] }}</td>
-                                    <td class="px-4 py-3 text-slate-200">{{ $class['time'] }}</td>
-                                    <td class="px-4 py-3 text-slate-200">{{ $class['room'] }}</td>
+                                    <td class="px-4 py-3 font-semibold text-white">{{ $class->name }}</td>
+                                    <td class="px-4 py-3 text-slate-200">{{ $class->teacher }}</td>
+                                    <td class="px-4 py-3 text-slate-200">{{ $class->time }}</td>
+                                    <td class="px-4 py-3 text-slate-200">{{ $class->room }}</td>
                                     <td class="px-4 py-3">
-                                        <span class="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-200">{{ $class['status'] }}</span>
+                                        <span class="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-200">{{ $class->status }}</span>
                                     </td>
                                 </tr>
                             @endforeach
