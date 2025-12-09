@@ -95,7 +95,7 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button class="hidden sm:inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10">
+                        <button data-open="quick-find" class="hidden sm:inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10">
                             <span class="text-xs text-slate-300">⌘K</span>
                             Quick find
                         </button>
@@ -124,6 +124,24 @@
                 @endif
                 @yield('content')
             </main>
+        </div>
+    </div>
+
+    <div id="quick-find" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm">
+        <div class="mx-auto mt-20 w-full max-w-xl rounded-2xl border border-white/10 bg-slate-900/90 shadow-2xl shadow-sky-500/10">
+            <div class="flex items-center gap-2 border-b border-white/10 px-4 py-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.5 6a4.5 4.5 0 100 9 4.5 4.5 0 000-9zM21 21l-4.35-4.35"/></svg>
+                <input id="quick-find-input" type="search" placeholder="Quick find..." class="w-full bg-transparent text-white placeholder:text-slate-500 focus:outline-none" autocomplete="off" />
+                <button data-close="quick-find" class="text-slate-400 hover:text-white" aria-label="Close quick find">✕</button>
+            </div>
+            <div class="max-h-72 overflow-y-auto px-2 py-3" id="quick-find-results">
+                @foreach ($nav as $item)
+                    <a href="{{ route($item['route']) }}" class="quick-find-item flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-slate-100 hover:bg-white/5" data-label="{{ strtolower($item['name']) }}">
+                        <span class="text-slate-400">{{ $item['name'] }}</span>
+                    </a>
+                @endforeach
+            </div>
+            <div class="border-t border-white/10 px-4 py-2 text-xs text-slate-500">Press Esc to close</div>
         </div>
     </div>
 </body>

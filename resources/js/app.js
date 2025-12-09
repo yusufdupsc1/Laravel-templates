@@ -117,4 +117,60 @@ document.addEventListener('DOMContentLoaded', () => {
         close?.addEventListener('click', () => toast.remove());
         setTimeout(() => toast.remove(), 4500);
     }
+
+    // Quick find palette
+    const quickFind = document.getElementById('quick-find');
+    const quickFindInput = document.getElementById('quick-find-input');
+    const quickFindItems = Array.from(document.querySelectorAll('.quick-find-item'));
+
+    const openQuickFind = () => {
+        if (!quickFind) return;
+        quickFind.classList.remove('hidden');
+        quickFindInput?.focus();
+    };
+
+    const closeQuickFind = () => {
+        if (!quickFind) return;
+        quickFind.classList.add('hidden');
+        quickFindInput.value = '';
+        quickFindItems.forEach((item) => (item.style.display = 'flex'));
+    };
+
+    document.querySelectorAll('[data-open="quick-find"]').forEach((btn) =>
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openQuickFind();
+        })
+    );
+
+    document.querySelectorAll('[data-close="quick-find"]').forEach((btn) =>
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeQuickFind();
+        })
+    );
+
+    document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            openQuickFind();
+        }
+        if (e.key === 'Escape') {
+            closeQuickFind();
+        }
+    });
+
+    quickFind?.addEventListener('click', (e) => {
+        if (e.target === quickFind) {
+            closeQuickFind();
+        }
+    });
+
+    quickFindInput?.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        quickFindItems.forEach((item) => {
+            const label = item.dataset.label || '';
+            item.style.display = label.includes(term) ? 'flex' : 'none';
+        });
+    });
 });
