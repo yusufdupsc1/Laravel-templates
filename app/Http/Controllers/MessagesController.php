@@ -6,7 +6,6 @@ use App\Models\Message;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\View\View;
 use App\Jobs\SendMessageNotifications;
 
@@ -33,7 +32,7 @@ class MessagesController extends Controller
 
         $message = Message::create($validated);
         // Queue notification delivery (email + SMS log placeholder)
-        Bus::dispatch(new SendMessageNotifications($message));
+        dispatch(new SendMessageNotifications($message));
         Cache::forget('dashboard-data');
 
         return redirect()->route('messages.index')->with('status', 'Message posted');
